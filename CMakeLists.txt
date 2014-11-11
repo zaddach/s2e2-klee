@@ -44,7 +44,7 @@ ADD_SUBDIRECTORY ( stp )
 INCLUDE_DIRECTORIES ( stp/include ${PROJECT_BINARY_DIR}/stp/include )
 SET (LINK_LIBRARIES ${LINK_LIBRARIES} stp )
 
-IF ( EXISTS "${PROJECT_SOURCE_DIR}/metaSMT" )
+IF ( EXISTS "${PROJECT_SOURCE_DIR}/metaSMT/CMakeLists.txt" )
     SET ( metaSMT_USE_SMT2       off )
     SET ( metaSMT_USE_SWORD      off )
     SET ( metaSMT_USE_Boolector  off )
