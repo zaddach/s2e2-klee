@@ -42,6 +42,31 @@ ENDIF ( NOT CMAKE_BUILD_TYPE )
 
 ADD_SUBDIRECTORY ( stp )
 INCLUDE_DIRECTORIES ( stp/include ${PROJECT_BINARY_DIR}/stp/include )
+SET (LINK_LIBRARIES ${LINK_LIBRARIES} stp )
+
+IF ( EXISTS "${PROJECT_SOURCE_DIR}/metaSMT" )
+    SET ( metaSMT_USE_SMT2       off )
+    SET ( metaSMT_USE_SWORD      off )
+    SET ( metaSMT_USE_Boolector  off )
+    SET ( metaSMT_USE_Z3         on )
+    SET ( metaSMT_USE_STP        on )
+    SET ( metaSMT_USE_CUDD       off )
+    SET ( metaSMT_USE_MiniSat    off )
+    SET ( metaSMT_USE_picosat    off )
+    SET ( metaSMT_USE_Aiger      off )
+    SET ( metaSMT_USE_CW         off )
+    SET ( metaSMT_USE_ExprSolver off )
+    
+    SET ( metaSMT_DOC_Doxygen    off )
+    SET ( metaSMT_ENABLE_TESTS   off )
+    SET ( metaSMT_ENABLE_BINDINGS on )
+    SET ( metaSMT_ENABLE_TOOLBOX  off )
+
+    ADD_SUBDIRECTORY ( metaSMT )
+    INCLUDE_DIRECTORIES ( metaSMT/src )
+    SET ( LINK_LIBRARIES ${LINK_LIBRARIES} metaSMT )
+    SET ( SUPPORT_METASMT 1 )
+ENDIF ()
 
 
 ##########################
@@ -147,10 +172,7 @@ SET_SOURCE_FILES_PROPERTIES ( ./lib/Solver/STPBuilder.cpp PROPERTIES COMPILE_FLA
 INCLUDE_DIRECTORIES ( 
 	"${PROJECT_SOURCE_DIR}/include" 
 	"${PROJECT_BINARY_DIR}/include" 
-	${LLVM_INCLUDE_DIRS} 
-	${STP_INCLUDE_DIRS} 
-	${EXTRA_INCLUDE_DIRECTORIES}
-	${METASMT_INCLUDE_DIRECTORIES})
+	${LLVM_INCLUDE_DIRS})
 ADD_DEFINITIONS ( -D__STDC_LIMIT_MACROS -D__STDC_CONSTANT_MACROS )
 
 SET ( CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -std=c++11 )

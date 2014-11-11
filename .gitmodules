@@ -1,3 +1,6 @@
 [submodule "stp"]
 	path = stp
 	url = git@zaddach.org:fruitloops/stp.git
+[submodule "metaSMT"]
+	path = metaSMT
+	url = git@zaddach.org:fruitloops/metaSMT.git
