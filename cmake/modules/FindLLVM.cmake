@@ -110,7 +110,7 @@ else()
             ${_quiet_arg}
         )
         string(REGEX REPLACE "([$^.[|*+?()]|])" "\\\\\\1" pattern ${prefix})
-        string(REGEX MATCHALL "${pattern}[^ ]+" LLVM_${var} ${tmplibs})
+        string(REGEX MATCHALL "${pattern}[^ ]+" LLVM_${var} "${tmplibs}")
     endmacro()
 
     llvm_set(VERSION_STRING version)
