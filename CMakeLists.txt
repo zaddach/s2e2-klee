@@ -1,10 +1,14 @@
 PROJECT ( klee )
 CMAKE_MINIMUM_REQUIRED ( VERSION 2.8.8 FATAL_ERROR )
 
+
+#########################
+# Configure Klee
+#########################
+
 SET ( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake/modules" )
 
 FIND_PACKAGE ( LLVM 3.4 REQUIRED all-targets bitwriter linker ipo instrumentation support tablegen asmparser )
-FIND_PACKAGE ( STP REQUIRED )
 
 # Configuration part
 INCLUDE ( CheckIncludeFiles )
@@ -27,17 +31,22 @@ IF ( HAVE_MALLOC_H )
 CHECK_FUNCTION_EXISTS ( mallinfo HAVE_MALLINFO )
 ENDIF ( HAVE_MALLOC_H )
 
-IF ( METASMT_ROOT )
-	SET ( METASMT_INCLUDE_DIRECTORIES ${METASMT_ROOT}/include )
-	SET ( METASMT_LIBRARY_DIRECTORIES ${METASMT_ROOT}/lib )
-	SET ( METASMT_LIBRARIES metaSMT )
-	SET ( SUPPORT_METASMT 1 )
-ENDIF ()
-
-
 IF ( NOT  CMAKE_BUILD_TYPE )
-	SET ( CMAKE_BUILD_TYPE "Debug" )
+    SET ( CMAKE_BUILD_TYPE "Debug" )
 ENDIF ( NOT CMAKE_BUILD_TYPE )
+
+
+##########################
+# Add subprojects
+##########################
+
+ADD_SUBDIRECTORY ( stp )
+INCLUDE_DIRECTORIES ( stp/include ${PROJECT_BINARY_DIR}/stp/include )
+
+
+##########################
+# Build klee 
+##########################
 
 CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/include/klee/Config/config.h.cmake.in ${PROJECT_BINARY_DIR}/include/klee/Config/config.h)
 
@@ -147,4 +156,4 @@ ADD_DEFINITIONS ( -D__STDC_LIMIT_MACROS -D__STDC_CONSTANT_MACROS )
 SET ( CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -std=c++11 )
 
 ADD_LIBRARY( klee ${KLEE_LIB_FILES} )
-TARGET_LINK_LIRARIES ( klee ${METASMT_LIBRARIES})
+TARGET_LINK_LIBRARIES ( klee ${METASMT_LIBRARIES})
