@@ -8,7 +8,8 @@ CMAKE_MINIMUM_REQUIRED ( VERSION 2.8.8 FATAL_ERROR )
 
 SET ( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake/modules" )
 
-FIND_PACKAGE ( LLVM 3.4 REQUIRED all-targets bitwriter linker ipo instrumentation support tablegen asmparser )
+FIND_PACKAGE ( LLVM 3.4 REQUIRED all-targets bitwriter bitreader linker ipo instrumentation support tablegen asmparser jit lto )
+FIND_PACKAGE ( Curses REQUIRED )
 
 # Configuration part
 INCLUDE ( CheckIncludeFiles )
@@ -140,7 +141,7 @@ SET ( KLEE_LIB_FILES
 	./lib/Solver/Solver.cpp
 	./lib/Solver/SolverStats.cpp
 	./lib/Solver/STPBuilder.cpp
-#	./lib/Support/MemoryUsage.cpp
+	./lib/Support/MemoryUsage.cpp
 	./lib/Support/RNG.cpp
 	./lib/Support/Time.cpp
 	./lib/Support/Timer.cpp
@@ -178,4 +179,4 @@ ADD_DEFINITIONS ( -D__STDC_LIMIT_MACROS -D__STDC_CONSTANT_MACROS )
 SET ( CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -std=c++11 )
 
 ADD_LIBRARY( klee ${KLEE_LIB_FILES} )
-TARGET_LINK_LIBRARIES ( klee ${METASMT_LIBRARIES})
+TARGET_LINK_LIBRARIES ( klee libstp_static ${METASMT_LIBRARIES} ${LLVM_LIBRARIES} ${CURSES_LIBRARIES} )
