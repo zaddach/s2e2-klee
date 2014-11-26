@@ -1,0 +1,3 @@
+[submodule "stp"]
+	path = stp
+	url = https://github.com/eurecom-s3/stp
