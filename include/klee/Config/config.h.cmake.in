@@ -1,0 +1,90 @@
+/* include/klee/Config/config.h.in.  Configured by cmake  */
+
+#ifndef KLEE_CONFIG_CONFIG_H
+#define KLEE_CONFIG_CONFIG_H
+
+/* Does the platform use __ctype_b_loc, etc. */
+#undef HAVE_CTYPE_EXTERNALS
+
+/* Define to 1 if you have the <inttypes.h> header file. */
+#cmakedefine HAVE_INTTYPES_H 1
+
+/* Define to 1 if you have the `stp' library (-lstp). */
+#undef HAVE_LIBSTP
+
+/* Define if mallinfo() is available on this platform. */
+#undef HAVE_MALLINFO
+
+/* Define to 1 if you have the <memory.h> header file. */
+#cmakedefine HAVE_MEMORY_H 1
+
+/* Define to 1 if you have the <selinux/selinux.h> header file. */
+#cmakedefine HAVE_SELINUX_SELINUX_H 1
+
+/* Define to 1 if you have the <stdint.h> header file. */
+#cmakedefine HAVE_STDINT_H 1
+
+/* Define to 1 if you have the <stdlib.h> header file. */
+#cmakedefine HAVE_STDLIB_H 1
+
+/* Define to 1 if you have the <strings.h> header file. */
+#cmakedefine HAVE_STRINGS_H 1
+
+/* Define to 1 if you have the <string.h> header file. */
+#cmakedefine HAVE_STRING_H 1
+
+/* Define to 1 if you have the <sys/acl.h> header file. */
+#cmakedefine HAVE_SYS_ACL_H 1
+
+/* Define to 1 if you have the <sys/capability.h> header file. */
+#cmakedefine HAVE_SYS_CAPABILITY_H 1
+
+/* Define to 1 if you have the <sys/stat.h> header file. */
+#cmakedefine HAVE_SYS_STAT_H 1
+
+/* Define to 1 if you have the <sys/types.h> header file. */
+#cmakedefine HAVE_SYS_TYPES_H 1
+
+/* Define to 1 if you have the <unistd.h> header file. */
+#cmakedefine HAVE_UNISTD_H 1
+
+/* LLVM version is release (instead of development) */
+#undef LLVM_IS_RELEASE
+
+/* LLVM major version number */
+#define LLVM_VERSION_MAJOR ${LLVM_VERSION_MAJOR}
+
+/* LLVM minor version number */
+#define LLVM_VERSION_MINOR ${LLVM_VERSION_MINOR}
+
+/* Define to the address where bug reports for this package should be sent. */
+#undef PACKAGE_BUGREPORT
+
+/* Define to the full name of this package. */
+#define PACKAGE_NAME ${CMAKE_PROJECT_NAME}
+
+/* Define to the full name and version of this package. */
+#define PACKAGE_STRING "${CMAKE_PROJECT_NAME} 0.01"
+
+/* Define to the one symbol short name of this package. */
+#define PACKAGE_TARNAME "-klee-"
+
+/* Define to the home page for this package. */
+#define PACKAGE_URL "https://github.com/klee/klee"
+
+/* Define to the version of this package. */
+#define PACKAGE_VERSION 0.01
+
+/* Configuration for runtime libraries */
+#define RUNTIME_CONFIGURATION "${CMAKE_BUILD_TYPE}"
+
+/* Define to 1 if you have the ANSI C header files. */
+#undef STDC_HEADERS
+
+/* klee-uclibc is supported */
+#undef SUPPORT_KLEE_UCLIBC
+
+/* Supporting metaSMT API */
+#cmakedefine SUPPORT_METASMT 1
+
+#endif
