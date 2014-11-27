@@ -845,12 +845,12 @@ STPSolverImpl::computeInitialValues(const Query &query,
   if (__stp_printstate) {
     char *buf;
     if (g_solverLog) {
-        buf = vc_printSMTLIB(vc, stp_e);
-        *g_solverLog << "==============START=============" << '\n';
-        *g_solverLog << buf << '\n';
-        g_solverLog->flush();
-        *g_solverLog << "==============END=============" << '\n';
-        free(buf);
+//        buf = vc_printSMTLIB(vc, stp_e);
+//        *g_solverLog << "==============START=============" << '\n';
+//        *g_solverLog << buf << '\n';
+//        g_solverLog->flush();
+//        *g_solverLog << "==============END=============" << '\n';
+//        free(buf);
     }
     //fprintf(stderr, "note: STP query: %.*s\n", (unsigned) len, buf);
   }

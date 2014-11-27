@@ -19,7 +19,9 @@ struct KTest;
 namespace llvm {
 class Function;
 class Module;
+namespace legacy {
 class FunctionPassManager;
+}
 }
 
 namespace klee {
@@ -52,11 +54,11 @@ public:
     std::vector<std::string> ExtraLibraries;
     bool Optimize;
     bool CheckDivZero;
-    llvm::FunctionPassManager *CustomPasses;
+    llvm::legacy::FunctionPassManager *CustomPasses;
 
     ModuleOptions(const std::vector<std::string>& _ExtraLibraries,
                   bool _Optimize, bool _CheckDivZero,
-                  llvm::FunctionPassManager *_CustomPasses = NULL)
+                  llvm::legacy::FunctionPassManager *_CustomPasses = NULL)
       : ExtraLibraries(_ExtraLibraries),
         Optimize(_Optimize), CheckDivZero(_CheckDivZero), CustomPasses(_CustomPasses) {}
   };

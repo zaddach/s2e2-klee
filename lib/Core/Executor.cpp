@@ -44,23 +44,21 @@
 #include "klee/Internal/Support/FloatEvaluation.h"
 #include "klee/Internal/System/Time.h"
 
-#include "llvm/Attributes.h"
-#include "llvm/BasicBlock.h"
-#include "llvm/Constants.h"
-#include "llvm/Function.h"
-#include "llvm/Instructions.h"
-#include "llvm/IntrinsicInst.h"
-#if !(LLVM_VERSION_MAJOR == 2 && LLVM_VERSION_MINOR < 7)
-#include "llvm/LLVMContext.h"
-#endif
-#include "llvm/Module.h"
+#include "llvm/IR/Attributes.h"
+#include "llvm/IR/BasicBlock.h"
+#include "llvm/IR/Constants.h"
+#include "llvm/IR/Function.h"
+#include "llvm/IR/Instructions.h"
+#include "llvm/IR/IntrinsicInst.h"
+#include "llvm/IR/LLVMContext.h"
+#include "llvm/IR/Module.h"
 #include "llvm/ADT/StringExtras.h"
 #include "llvm/Support/CallSite.h"
 #include "llvm/Support/CommandLine.h"
 #include "llvm/Support/GetElementPtrTypeIterator.h"
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/Support/Process.h"
-#include "llvm/DataLayout.h"
+#include "llvm/IR/DataLayout.h"
 
 #include <cassert>
 #include <algorithm>
@@ -546,9 +544,6 @@ void Executor::initializeGlobals(ExecutionState &state) {
   if (m->getModuleInlineAsm() != "")
     klee_warning("executable has module level assembly (ignoring)");
 
-  assert(m->lib_begin() == m->lib_end() &&
-         "XXX do not support dependent libraries");
-
   // represent function globals using the address of the actual llvm function
   // object. given that we use malloc to allocate memory in states this also
   // ensures that we won't conflict. we don't need to allocate a memory object
@@ -669,9 +664,9 @@ void Executor::initializeGlobals(ExecutionState &state) {
         uint64_t address = ::strtoll(i->getName().str().c_str()+1, &end, 0);
 
         if (end && *end == '\0') {
-          klee_message("NOTE: allocated global at asm specified address: %#08"
-                       PRIx64 " (%" PRIu64 " bytes)",
-                       address, size);
+//          klee_message("NOTE: allocated global at asm specified address: %#08"
+//                       PRIx64 " (%" PRIu64 " bytes)",
+//                       address, size);
           mo = memory->allocateFixed(address, size, &*i);
           mo->isUserSpecified = true; // XXX hack;
         }
@@ -1647,6 +1642,19 @@ static bool isDebugIntrinsic(const Function *f, KModule *KM) {
 #endif
 }
 
+static inline const llvm::fltSemantics * fpWidthToSemantics(unsigned width) {
+  switch(width) {
+  case Expr::Int32:
+    return &llvm::APFloat::IEEEsingle;
+  case Expr::Int64:
+    return &llvm::APFloat::IEEEdouble;
+  case Expr::Fl80:
+    return &llvm::APFloat::x87DoubleExtended;
+  default:
+    return 0;
+  }
+}
+
 void Executor::executeInstruction(ExecutionState &state, KInstruction *ki) {
   Instruction *i = ki->inst;
   switch (i->getOpcode()) {
@@ -1690,7 +1698,7 @@ void Executor::executeInstruction(ExecutionState &state, KInstruction *ki) {
                            CallSite(cast<CallInst>(caller)));
 
             // XXX need to check other param attrs ?
-            if (cs.paramHasAttr(0, llvm::Attributes::SExt)) {
+            if (cs.paramHasAttr(0, llvm::Attribute::SExt)) {
               result = SExtExpr::create(result, to);
             } else {
               result = ZExtExpr::create(result, to);
@@ -1867,7 +1875,7 @@ void Executor::executeInstruction(ExecutionState &state, KInstruction *ki) {
 
             if (from != to) {
               // XXX need to check other param attrs ?
-              if (cs.paramHasAttr(i+1, llvm::Attributes::SExt)) {
+              if (cs.paramHasAttr(i+1, llvm::Attribute::SExt)) {
                 arguments[i] = SExtExpr::create(arguments[i], to);
               } else {
                 arguments[i] = ZExtExpr::create(arguments[i], to);
@@ -2258,8 +2266,8 @@ void Executor::executeInstruction(ExecutionState &state, KInstruction *ki) {
                                         "floating point");
     ref<ConstantExpr> right = toConstant(state, eval(ki, 1, state).value,
                                          "floating point");
-    llvm::APFloat Res(left->getAPValue());
-    Res.add(APFloat(right->getAPValue()), APFloat::rmNearestTiesToEven);
+    llvm::APFloat Res(*fpWidthToSemantics(left->getWidth()), left->getAPValue());
+    Res.add(APFloat(*fpWidthToSemantics(right->getWidth()), right->getAPValue()), APFloat::rmNearestTiesToEven);
     bindLocal(ki, state, ConstantExpr::alloc(Res.bitcastToAPInt()));
     break;
   }
@@ -2269,8 +2277,8 @@ void Executor::executeInstruction(ExecutionState &state, KInstruction *ki) {
                                         "floating point");
     ref<ConstantExpr> right = toConstant(state, eval(ki, 1, state).value,
                                          "floating point");
-    llvm::APFloat Res(left->getAPValue());
-    Res.subtract(APFloat(right->getAPValue()), APFloat::rmNearestTiesToEven);
+    llvm::APFloat Res(*fpWidthToSemantics(left->getWidth()), left->getAPValue());
+    Res.subtract(APFloat(*fpWidthToSemantics(right->getWidth()), right->getAPValue()), APFloat::rmNearestTiesToEven);
     bindLocal(ki, state, ConstantExpr::alloc(Res.bitcastToAPInt()));
     break;
   }
@@ -2280,8 +2288,8 @@ void Executor::executeInstruction(ExecutionState &state, KInstruction *ki) {
                                         "floating point");
     ref<ConstantExpr> right = toConstant(state, eval(ki, 1, state).value,
                                          "floating point");
-    llvm::APFloat Res(left->getAPValue());
-    Res.multiply(APFloat(right->getAPValue()), APFloat::rmNearestTiesToEven);
+    llvm::APFloat Res(*fpWidthToSemantics(left->getWidth()), left->getAPValue());
+    Res.multiply(APFloat(*fpWidthToSemantics(right->getWidth()), right->getAPValue()), APFloat::rmNearestTiesToEven);
     bindLocal(ki, state, ConstantExpr::alloc(Res.bitcastToAPInt()));
     break;
   }
@@ -2291,8 +2299,8 @@ void Executor::executeInstruction(ExecutionState &state, KInstruction *ki) {
                                         "floating point");
     ref<ConstantExpr> right = toConstant(state, eval(ki, 1, state).value,
                                          "floating point");
-    llvm::APFloat Res(left->getAPValue());
-    Res.divide(APFloat(right->getAPValue()), APFloat::rmNearestTiesToEven);
+    llvm::APFloat Res(*fpWidthToSemantics(left->getWidth()), left->getAPValue());
+    Res.divide(APFloat(*fpWidthToSemantics(right->getWidth()), right->getAPValue()), APFloat::rmNearestTiesToEven);
     bindLocal(ki, state, ConstantExpr::alloc(Res.bitcastToAPInt()));
     break;
   }
@@ -2302,8 +2310,8 @@ void Executor::executeInstruction(ExecutionState &state, KInstruction *ki) {
                                         "floating point");
     ref<ConstantExpr> right = toConstant(state, eval(ki, 1, state).value,
                                          "floating point");
-    llvm::APFloat Res(left->getAPValue());
-    Res.mod(APFloat(right->getAPValue()), APFloat::rmNearestTiesToEven);
+    llvm::APFloat Res(*fpWidthToSemantics(left->getWidth()), left->getAPValue());
+    Res.mod(APFloat(*fpWidthToSemantics(right->getWidth()), right->getAPValue()), APFloat::rmNearestTiesToEven);
     bindLocal(ki, state, ConstantExpr::alloc(Res.bitcastToAPInt()));
     break;
   }
@@ -2397,8 +2405,8 @@ void Executor::executeInstruction(ExecutionState &state, KInstruction *ki) {
                                         "floating point");
     ref<ConstantExpr> right = toConstant(state, eval(ki, 1, state).value,
                                          "floating point");
-    APFloat LHS(left->getAPValue());
-    APFloat RHS(right->getAPValue());
+    APFloat LHS(*fpWidthToSemantics(left->getWidth()), left->getAPValue());
+    APFloat RHS(*fpWidthToSemantics(right->getWidth()), right->getAPValue());
     APFloat::cmpResult CmpRes = LHS.compare(RHS);
 
     bool Result = false;
@@ -2748,7 +2756,7 @@ void Executor::run(ExecutionState &initialState) {
         // We need to avoid calling GetMallocUsage() often because it
         // is O(elts on freelist). This is really bad since we start
         // to pummel the freelist once we hit the memory cap.
-        unsigned mbs = sys::Process::GetTotalMemoryUsage() >> 20;
+        unsigned mbs = sys::Process::GetMallocUsage() >> 20;
         
         if (mbs > MaxMemory) {
           if (mbs > MaxMemory + 100) {

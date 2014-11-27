@@ -21,7 +21,7 @@
 #include "klee/Executor.h"
 #include "MemoryManager.h"
 
-#include "llvm/Module.h"
+#include "llvm/IR/Module.h"
 #include "llvm/ADT/Twine.h"
 
 #include <errno.h>
@@ -131,7 +131,7 @@ void SpecialFunctionHandler::prepare() {
       // Make sure NoReturn attribute is set, for optimization and
       // coverage counting.
       if (hi.doesNotReturn)
-        f->addFnAttr(Attributes::NoReturn);
+        f->addFnAttr(Attribute::NoReturn);
 
       // Change to a declaration since we handle internally (simplifies
       // module and allows deleting dead code).

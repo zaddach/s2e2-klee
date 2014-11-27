@@ -9,17 +9,20 @@
 
 #include "klee/Internal/Support/ModuleUtil.h"
 
-#include "llvm/Function.h"
-#include "llvm/Instructions.h"
-#include "llvm/IntrinsicInst.h"
+#include "llvm/IR/Function.h"
+#include "llvm/IR/Instructions.h"
+#include "llvm/IR/IntrinsicInst.h"
 #include "llvm/Linker.h"
-#include "llvm/Module.h"
+#include "llvm/IR/Module.h"
 #include "llvm/Assembly/AssemblyAnnotationWriter.h"
 #include "llvm/Support/CFG.h"
 #include "llvm/Support/InstIterator.h"
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/Analysis/ValueTracking.h"
 #include "llvm/Support/Path.h"
+#include "llvm/Support/SourceMgr.h"
+#include "llvm/IR/LLVMContext.h"
+#include "llvm/IRReader/IRReader.h"
 
 #include <map>
 #include <iostream>
@@ -32,16 +35,20 @@ using namespace klee;
 
 Module *klee::linkWithLibrary(Module *module, 
                               const std::string &libraryName) {
-  Linker linker("klee", module, false);
+  Linker linker(module);
 
-  llvm::sys::Path libraryPath(libraryName);
   bool native = false;
+
+  LLVMContext libraryContext;
+  SMDiagnostic error;
+  Module *library = ParseIRFile(libraryName, error, libraryContext);
+  std::string error2;
     
-  if (linker.LinkInFile(libraryPath, native)) {
+  if (library && linker.linkInModule(library, &error2)) {
     assert(0 && "linking in library failed!");
   }
     
-  return linker.releaseModule();
+  return linker.getModule();
 }
 
 Function *klee::getDirectCallTarget(const Instruction *i) {

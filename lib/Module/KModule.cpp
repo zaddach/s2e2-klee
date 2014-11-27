@@ -21,25 +21,25 @@
 #include "klee/Internal/Support/ModuleUtil.h"
 
 #include "llvm/Bitcode/ReaderWriter.h"
-#include "llvm/Instructions.h"
+#include "llvm/IR/Instructions.h"
 #if !(LLVM_VERSION_MAJOR == 2 && LLVM_VERSION_MINOR < 7)
-#include "llvm/LLVMContext.h"
+#include "llvm/IR/LLVMContext.h"
 #include "llvm/Support/Path.h"
 #else
 #include "llvm/ModuleProvider.h"
 #include "llvm/System/Path.h"
 #endif
 
-#include "llvm/Module.h"
+#include "llvm/IR/Module.h"
 #include "llvm/Support/CallSite.h"
-#include "llvm/PassManager.h"
-#include "llvm/ValueSymbolTable.h"
+#include "llvm/IR/LegacyPassManager.h"
+#include "llvm/IR/ValueSymbolTable.h"
 #include "llvm/Support/CommandLine.h"
 #include "llvm/Support/raw_ostream.h"
 #if !(LLVM_VERSION_MAJOR == 2 && LLVM_VERSION_MINOR < 7)
 #include "llvm/Support/raw_os_ostream.h"
 #endif
-#include "llvm/DataLayout.h"
+#include "llvm/IR/DataLayout.h"
 #include "llvm/Transforms/Scalar.h"
 
 #include <sstream>
@@ -88,14 +88,14 @@ namespace {
 }
 
 namespace llvm {
-extern void CreateOptimizePasses(PassManagerBase&, Module*);
+extern void CreateOptimizePasses(llvm::legacy::PassManagerBase&, Module*);
 }
 
 namespace klee {
 
 struct KModulePrivate {
-  llvm::PassManager pmOptimize, pm3, pm4;
-  llvm::FunctionPassManager fpmOptimize, fpm3, fpm4;
+  llvm::legacy::PassManager pmOptimize, pm3, pm4;
+  llvm::legacy::FunctionPassManager fpmOptimize, fpm3, fpm4;
 
   KModulePrivate(llvm::Module *module,
                  llvm::DataLayout *targetData)
@@ -328,7 +328,7 @@ void KModule::prepare(const Interpreter::ModuleOptions &opts,
   // invariant transformations that we will end up doing later so that
   // optimize is seeing what is as close as possible to the final
   // module.
-  PassManager pm;
+  legacy::PassManager pm;
   pm.add(new RaiseAsmPass());
   if (opts.CheckDivZero) pm.add(new DivCheckPass());
   // FIXME: This false here is to work around a bug in

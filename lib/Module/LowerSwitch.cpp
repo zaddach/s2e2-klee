@@ -16,7 +16,7 @@
 
 #include "Passes.h"
 #if !(LLVM_VERSION_MAJOR == 2 && LLVM_VERSION_MINOR < 7)
-#include "llvm/LLVMContext.h"
+#include "llvm/IR/LLVMContext.h"
 #endif
 #include <algorithm>
 

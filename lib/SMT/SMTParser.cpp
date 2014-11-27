@@ -96,7 +96,7 @@ bool SMTParser::Solve() {
       }
     }
   }
-  llvm::cout << "FAIL";
+  llvm::outs() << "FAIL";
   exit(1);
 }
 

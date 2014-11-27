@@ -26,18 +26,17 @@
 #include "klee/UserSearcher.h"
 #include "klee/SolverStats.h"
 
-#include "llvm/BasicBlock.h"
-#include "llvm/Function.h"
-#include "llvm/Instructions.h"
-#include "llvm/IntrinsicInst.h"
-#include "llvm/InlineAsm.h"
-#include "llvm/Module.h"
-#include "llvm/Type.h"
+#include "llvm/IR/BasicBlock.h"
+#include "llvm/IR/Function.h"
+#include "llvm/IR/Instructions.h"
+#include "llvm/IR/IntrinsicInst.h"
+#include "llvm/IR/InlineAsm.h"
+#include "llvm/IR/Module.h"
+#include "llvm/IR/Type.h"
 #include "llvm/Support/CommandLine.h"
 #include "llvm/Support/CFG.h"
 #include "llvm/Support/Process.h"
 #include "llvm/Support/Path.h"
-#include "llvm/Support/PathV2.h"
 #include "llvm/Support/FileSystem.h"
 
 #include <iostream>
@@ -169,12 +168,12 @@ StatsTracker::StatsTracker(Executor &_executor, std::string _objectFilename,
     updateMinDistToUncovered(_updateMinDistToUncovered) {
   KModule *km = executor.kmodule;
 
-  sys::Path module(objectFilename);
   if (!sys::path::is_absolute(objectFilename)) {
-    sys::Path current = sys::Path::GetCurrentDirectory();
-    current.appendComponent(objectFilename);
-    if (sys::fs::exists(current.c_str()))
-      objectFilename = current.c_str();
+    SmallString<4096> current;
+    sys::fs::current_path(current);
+    sys::path::append(current, objectFilename);
+    if (sys::fs::exists(current.str()))
+      objectFilename = current.str();
   }
 
   if (OutputIStats)
@@ -381,7 +380,7 @@ void StatsTracker::writeStatsLine() {
              << "," << numBranches
              << "," << util::getUserTime()
              << "," << executor.states.size()
-             << "," << sys::Process::GetTotalMemoryUsage()
+             << "," << sys::Process::GetMallocUsage()
              << "," << stats::queries
              << "," << stats::queryConstructs
              << "," << 0 // was numObjects
@@ -419,7 +418,7 @@ void StatsTracker::writeIStats() {
 
   of << "version: 1\n";
   of << "creator: klee\n";
-  of << "pid: " << sys::Process::GetCurrentUserId() << "\n";
+//  of << "pid: " << sys::Process::GetCurrentUserId() << "\n";
   of << "cmd: " << m->getModuleIdentifier() << "\n\n";
   of << "\n";
   

@@ -9,9 +9,9 @@
 
 #include "Passes.h"
 
-#include "llvm/InlineAsm.h"
+#include "llvm/IR/InlineAsm.h"
 #if !(LLVM_VERSION_MAJOR == 2 && LLVM_VERSION_MINOR < 7)
-#include "llvm/LLVMContext.h"
+#include "llvm/IR/LLVMContext.h"
 #endif
 
 using namespace llvm;

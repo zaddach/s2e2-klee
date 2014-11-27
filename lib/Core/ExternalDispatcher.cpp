@@ -17,15 +17,15 @@
 #undef PACKAGE_TARNAME
 #undef PACKAGE_VERSION
 
-#include "llvm/Module.h"
-#include "llvm/Constants.h"
-#include "llvm/DerivedTypes.h"
-#include "llvm/Instructions.h"
+#include "llvm/IR/Module.h"
+#include "llvm/IR/Constants.h"
+#include "llvm/IR/DerivedTypes.h"
+#include "llvm/IR/Instructions.h"
 #if (LLVM_VERSION_MAJOR == 2 && LLVM_VERSION_MINOR < 7)
 #include "llvm/ModuleProvider.h"
 #endif
 #if !(LLVM_VERSION_MAJOR == 2 && LLVM_VERSION_MINOR < 7)
-#include "llvm/LLVMContext.h"
+#include "llvm/IR/LLVMContext.h"
 #endif
 #include "llvm/ExecutionEngine/JIT.h"
 #include "llvm/ExecutionEngine/GenericValue.h"

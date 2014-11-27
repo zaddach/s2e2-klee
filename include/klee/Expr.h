@@ -97,6 +97,7 @@ public:
   static const Width Int16 = 16;
   static const Width Int32 = 32;
   static const Width Int64 = 64;
+  static const Width Fl80 = 80;
   
 
   enum Kind {

@@ -123,8 +123,8 @@ SET ( KLEE_LIB_FILES
 ./lib/Solver/ConstantDivision.cpp
 ./lib/Solver/PCLoggingSolver.cpp
 ./lib/Solver/STPBuilder.cpp
-./lib/SMT/SMTParser.cpp
-./lib/SMT/main.cpp
+#./lib/SMT/SMTParser.cpp
+#./lib/SMT/main.cpp
 ./lib/Support/RNG.cpp
 ./lib/Support/Timer.cpp
 ./lib/Support/Time.cpp

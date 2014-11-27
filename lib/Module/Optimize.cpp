@@ -15,14 +15,14 @@
 //
 //===----------------------------------------------------------------------===//
 
-#include "llvm/Module.h"
+#include "llvm/IR/Module.h"
 #include "llvm/PassManager.h"
 #include "llvm/Analysis/Passes.h"
 #include "llvm/Analysis/LoopPass.h"
 #include "llvm/Analysis/Verifier.h"
 #include "llvm/Support/CommandLine.h"
 #include "llvm/Support/DynamicLibrary.h"
-#include "llvm/DataLayout.h"
+#include "llvm/IR/DataLayout.h"
 #include "llvm/Target/TargetMachine.h"
 #include "llvm/Transforms/IPO.h"
 #include "llvm/Transforms/Scalar.h"
@@ -116,7 +116,6 @@ static void AddStandardCompilePasses(PassManagerBase &PM) {
     addPass(PM, createFunctionInliningPass());   // Inline small functions
   addPass(PM, createArgumentPromotionPass());    // Scalarize uninlined fn args
 
-  addPass(PM, createSimplifyLibCallsPass());     // Library Call Optimizations
   addPass(PM, createInstructionCombiningPass()); // Cleanup for scalarrepl.
   addPass(PM, createJumpThreadingPass());        // Thread jumps.
   addPass(PM, createCFGSimplificationPass());    // Merge & remove BBs
