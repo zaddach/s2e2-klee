@@ -11,8 +11,8 @@
 #define KLEE_EXPRHASHMAP_H
 
 #include "klee/Expr.h"
-#include <tr1/unordered_map>
-#include <tr1/unordered_set>
+#include <unordered_map>
+#include <unordered_set>
 
 namespace klee {
 
@@ -33,13 +33,13 @@ namespace klee {
   template<class T> 
   class ExprHashMap : 
 
-    public std::tr1::unordered_map<ref<Expr>,
+    public std::unordered_map<ref<Expr>,
 				   T,
 				   klee::util::ExprHash,
 				   klee::util::ExprCmp> {
   };
   
-  typedef std::tr1::unordered_set<ref<Expr>,
+  typedef std::unordered_set<ref<Expr>,
 				  klee::util::ExprHash,
 				  klee::util::ExprCmp> ExprHashSet;
 

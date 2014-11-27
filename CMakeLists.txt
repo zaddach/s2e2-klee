@@ -8,7 +8,7 @@ CMAKE_MINIMUM_REQUIRED ( VERSION 2.8.8 FATAL_ERROR )
 
 SET ( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake/modules" )
 
-FIND_PACKAGE ( LLVM 3.4 REQUIRED all-targets bitwriter bitreader linker ipo instrumentation support tablegen asmparser jit lto )
+FIND_PACKAGE ( LLVM 3.4 REQUIRED all-targets bitwriter bitreader irreader linker ipo instrumentation support tablegen asmparser jit lto )
 FIND_PACKAGE ( Curses REQUIRED )
 
 # Configuration part
